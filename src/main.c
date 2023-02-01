@@ -1,66 +1,38 @@
 #include "FreeRTOS.h"
 #include "task.h"
+#include "main.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-void vTask1(void *pvParameters);
-void vTask2(void *pvParameters);
-
-#define MIN_TRES 0
-#define MAX_TRES 60
-#define MIN_TEMP 16
-#define MAX_TEMP 32
-#define MIN_TEMP_FR 14
-#define MAX_TEMP_FR 25
-
-typedef enum {
-    Abrir_Ligar,
-    Fechar_Desligar
-}acionamento;
-
-typedef enum {
-    config,
-    modos
-}operacao;
-
-typedef enum {
-    refrig,
-    autom,
-    ventil
-}modosArCond;
-
-typedef enum {
-    roupasPesadas,
-    roupasDelicadas,
-    rapida
-}modosLavagem;
-
-typedef enum {
-    varrer,
-    aspirar,
-    limpar
-}modosAsp;
-
-acionamento comandoUsuario;
-
 int main(void)
-{
-    xTaskCreate(&xReqAcion, "Controle portas da garagem", 1024, NULL, 1, NULL); // aperiodica
-    xTaskCreate(&vCtrlArCond, "Controle ar-condicionado", 1024, NULL, 2, NULL); // periodica
-    xTaskCreate(&vCtrlMaqLav, "Controle maquina de lavar", 1024, NULL, 3, NULL); // periodica
-    xTaskCreate(&xReqAcion, "Controle camera do freezer", 1024, NULL, 4, NULL); // aperiodica
-    xTaskCreate(&vCtrlTempFr, "Controle temperatura do freezer", 1024, NULL, 5, NULL); // periodica
-    xTaskCreate(&vCtrlAsp, "Controle aspirador de pó", 1024, NULL, 6, NULL); // aperiodica
+{   
+    xTaskHandle tsk1;
+    xTaskHandle tsk2;
+    xTaskHandle tsk3;
+    xTaskHandle tsk4;
 
+    // Criação de tasks
+    // Tasks periódicas
+    xTaskCreate(vCtrlArCond, (signed char *)"Controle ar-condicionado", configMINIMAL_STACK_SIZE, (void *)NULL, 4, &tsk1); // periodica
+    xTaskCreate(vCtrlMaqLav, (signed char *)"Controle maquina de lavar", configMINIMAL_STACK_SIZE, (void *)NULL, 3, &tsk2); // periodica
+    xTaskCreate(vCtrlTempFr, (signed char *)"Controle temperatura do freezer", configMINIMAL_STACK_SIZE, (void *)NULL, 2, &tsk3); // periodica
+    
+    // Tasks aperiodicas
+    xTaskCreate(vBkgServer, (signed char *)"Tasks aperiódicas", configMINIMAL_STACK_SIZE, (void *)NULL, 1, &tsk3); // servidor de aperiodicas
+    
+    // Escalonador
     vTaskStartScheduler();
+
+    for(;;);
 
     return 0;
 }
 
-acionamento xReqAcion(acionamento comandoUsuario)
+acionamento xReqAcion()
 {   
     acionamento status;
+    acionamento comandoUsuario = 0;
 
     switch(comandoUsuario){
         case Abrir_Ligar:
@@ -87,8 +59,12 @@ int sRand(int min, int max){
     return numRand;
 }
 
-void vCtrlArCond(acionamento comandoUsuario, operacao oprUsuario, modosArCond modUsuario)
+void vCtrlArCond()
 {   
+    acionamento comandoUsuario = 0;
+    operacao oprUsuario = 0;
+    modosArCond modUsuario = 1;
+
     // Acionamento liga e desliga
     acionamento status;
     int tmpr;
@@ -123,10 +99,15 @@ void vCtrlArCond(acionamento comandoUsuario, operacao oprUsuario, modosArCond mo
     }
 }
 
-void vCtrlMaqLav(acionamento comandoUsuario, operacao oprUsuario, modosLavagem modUsuario)
+void vCtrlMaqLav()
 {   
     // Acionamento liga e desliga
     acionamento status;
+
+    acionamento comandoUsuario = 0;
+    operacao oprUsuario = 1;
+    modosLavagem modUsuario = 2;
+
     int tRes;
     status = xReqAcion(comandoUsuario);
 
@@ -165,11 +146,15 @@ void vCtrlMaqLav(acionamento comandoUsuario, operacao oprUsuario, modosLavagem m
 }
 
 
-void vCtrlTempFr(acionamento comandoUsuario, operacao oprUsuario)
+void vCtrlTempFr()
 {
     // Acionamento liga e desliga
     acionamento status;
     int tmpr;
+
+    acionamento comandoUsuario = 0;
+    operacao oprUsuario = 0;
+
     status = xReqAcion(comandoUsuario);
 
     if(status == Abrir_Ligar){
@@ -192,10 +177,15 @@ void vCtrlTempFr(acionamento comandoUsuario, operacao oprUsuario)
     }
 }
 
-void vCtrlAsp(acionamento comandoUsuario, operacao oprUsuario, modosAsp modUsuario)
+void vCtrlAsp()
 {
     // Acionamento liga e desliga
     acionamento status;
+
+    acionamento comandoUsuario = 0;
+    operacao oprUsuario = 1;
+    modosAsp modUsuario = 1;
+
     status = xReqAcion(comandoUsuario);
 
     if(status == Abrir_Ligar){
@@ -221,4 +211,32 @@ void vCtrlAsp(acionamento comandoUsuario, operacao oprUsuario, modosAsp modUsuar
     }else{
         printf("Aspirador desligado");
     }
+}
+
+void vBkgServer()
+{   
+    int entrada;
+
+    printf("Digite as tarefas as quais deseja executar:\n");
+    printf("1 - Controle portas da garagem\n");
+    printf("2 - Controle camera do freezer\n");
+    printf("3 - Controle camera do freezer\n");
+    printf("Aperte enter para encerrar a operação\n");
+
+   while (scanf("%d", &entrada) != EOF) {
+    switch(entrada){
+        case 1:
+            printf("Controlando portas da garagem ...");
+            xReqAcion(0);
+            break;
+        case 2:
+            printf("Controlando camera do freezer ...");
+            xReqAcion(1);
+        case 3:
+            printf("Controlando aspirador de pó ...");
+            vCtrlAsp(0, 1, 2);
+        default:
+            break;
+    }
+   }
 }
