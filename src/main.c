@@ -44,12 +44,12 @@ acionamento xReqAcion()
 
     switch(comandoUsuario){
         case Abrir_Ligar:
-            printf("Abrindo/ligando ...");
+            printf("Abrindo/ligando ...\n");
             vTaskDelay(30);
             status = Abrir_Ligar;
             break;
         case Fechar_Desligar:
-            printf("Fechando/desligando ...");
+            printf("Fechando/desligando ...\n");
             vTaskDelay(30);
             status = Fechar_Desligar;
             break;
@@ -79,22 +79,22 @@ void vCtrlArCond(void *pvParameters)
     status = xReqAcion(comandoUsuario);
 
     if(status == Abrir_Ligar){
-        printf("Ar condicionado ligado");
+        printf("Ar condicionado ligado\n");
         switch(oprUsuario){
             case config:
                 // Controle da temperatura
                 tmpr = sRand(MIN_TEMP, MAX_TEMP);
-                printf("Ar condicionado configurado em %d°C", tmpr);
+                printf("Ar condicionado configurado em %d°C\n", tmpr);
             case modos:
                 switch (modUsuario){ // Alterna modos de operação
                     case refrig:
-                        printf("Ar condicionado configurado no modo refrigeracao");
+                        printf("Ar condicionado configurado no modo refrigeracao\n");
                         break;
                     case autom:
-                        printf("Ar condicionado configurado no modo automatico");
+                        printf("Ar condicionado configurado no modo automatico\n");
                         break;
                     case ventil:
-                        printf("Ar condicionado configurado no modo ventilacao");
+                        printf("Ar condicionado configurado no modo ventilacao\n");
                         break;
                     default:
                         break;
@@ -103,7 +103,7 @@ void vCtrlArCond(void *pvParameters)
                 break;
         }   
     }else{
-        printf("Ar condicionado desligado");
+        printf("Ar condicionado desligado\n");
     }
 }
 
@@ -120,26 +120,26 @@ void vCtrlMaqLav(void *pvParameters)
     status = xReqAcion(comandoUsuario);
 
     if(status == Abrir_Ligar){
-        printf("Máquina ligada");
+        printf("Máquina ligada\n");
 
         // Visualizar o tempo restante
         tRes = sRand(MIN_TRES, MAX_TRES);
         if(tRes > 0)
-            printf("Tempo restante para finalizar o ciclo: %d minutos", tRes);
+            printf("Tempo restante para finalizar o ciclo: %d minutos\n", tRes);
         else
-            printf("Ciclo de lavagem finalizado");
+            printf("Ciclo de lavagem finalizado\n");
 
         switch(oprUsuario){         
             case modos:
                 switch (modUsuario){ // Alterna modos de lavagem
                     case roupasPesadas:
-                        printf("Maquina de lavar configurada no modo roupas pesadas");
+                        printf("Maquina de lavar configurada no modo roupas pesadas\n");
                         break;
                     case roupasDelicadas:
-                        printf("Maquina de lavar configurada no modo roupas delicadas");
+                        printf("Maquina de lavar configurada no modo roupas delicadas\n");
                         break;
                     case rapida:
-                        printf("Maquina de lavar configurada no modo lavagem rapida");
+                        printf("Maquina de lavar configurada no modo lavagem rapida\n");
                         break;
                     default:
                         break;
@@ -148,7 +148,7 @@ void vCtrlMaqLav(void *pvParameters)
                 break;
         }   
     }else{
-        printf("Máquina desligada");
+        printf("Máquina desligada\n");
     } 
     
 }
@@ -166,22 +166,22 @@ void vCtrlTempFr(void *pvParameters)
     status = xReqAcion(comandoUsuario);
 
     if(status == Abrir_Ligar){
-        printf("Freezer ligado");
+        printf("Freezer ligado\n");
 
         tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
-        printf("Temperatura atual do freezer: -%d°C", tmpr);
+        printf("Temperatura atual do freezer: -%d°C\n", tmpr);
         
         switch(oprUsuario){
             case config:
                 // Controle da temperatura
                 tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
-                printf("Freezer configurado em -%d°C", tmpr);
+                printf("Freezer configurado em -%d°C\n", tmpr);
             default:
                 break;
         } 
 
     }else{
-        printf("Freezer desligado");
+        printf("Freezer desligado\n");
     }
 }
 
@@ -197,18 +197,18 @@ void vCtrlAsp()
     status = xReqAcion(comandoUsuario);
 
     if(status == Abrir_Ligar){
-        printf("Aspirador ligado");
+        printf("Aspirador ligado\n");
         switch(oprUsuario){
             case modos:
                 switch (modUsuario){ // Alterna modos de operação
                     case varrer:
-                        printf("Aspirador configurado no modo varrer");
+                        printf("Aspirador configurado no modo varrer\n");
                         break;
                     case aspirar:
-                        printf("Aspirador configurado no modo aspirar");
+                        printf("Aspirador configurado no modo aspirar\n");
                         break;
                     case limpar:
-                        printf("Aspirador configurado no modo limpar");
+                        printf("Aspirador configurado no modo limpar\n");
                         break;
                     default:
                         break;
@@ -217,7 +217,7 @@ void vCtrlAsp()
                 break;
         }   
     }else{
-        printf("Aspirador desligado");
+        printf("Aspirador desligado\n");
     }
 }
 
@@ -234,14 +234,14 @@ void vBkgServer(void *pvParameters)
    while (scanf("%d", &entrada) != EOF) {
     switch(entrada){
         case 1:
-            printf("Controlando portas da garagem ...");
+            printf("Controlando portas da garagem ...\n");
             xReqAcion(0);
             break;
         case 2:
-            printf("Controlando camera do freezer ...");
+            printf("Controlando camera do freezer ...\n");
             xReqAcion(1);
         case 3:
-            printf("Controlando aspirador de pó ...");
+            printf("Controlando aspirador de pó ...\n");
             vCtrlAsp(0, 1, 2);
         default:
             break;
