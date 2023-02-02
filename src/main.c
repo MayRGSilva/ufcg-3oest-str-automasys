@@ -239,6 +239,7 @@ void vBkgServer(void *pvParameters)
         case 3:
             printf("Controlando aspirador de pó ...\n");
             vCtrlAsp();
+            break;
         default:
             break;
     }
