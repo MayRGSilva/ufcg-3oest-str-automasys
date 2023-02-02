@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-acionamento xReqAcion();
+acionamento xReqAcion(acionamento comandoUsuario);
 int sRand(int min, int max);
 
 void vCtrlArCond(void *pvParameters);
@@ -27,7 +27,7 @@ int main(void)
     xTaskCreate(vCtrlTempFr, "Controle temperatura do freezer", configMINIMAL_STACK_SIZE, NULL, 2, &tsk3); // periodica
     
     // Tasks aperiodicas
-    xTaskCreate(vBkgServer, "Tasks aperiódicas", configMINIMAL_STACK_SIZE, NULL, 1, &tsk3); // servidor de aperiodicas
+    xTaskCreate(vBkgServer, "Tasks aperiodicas", configMINIMAL_STACK_SIZE, NULL, 1, &tsk4); // servidor de aperiodicas
     
     // Escalonador
     vTaskStartScheduler();
@@ -37,20 +37,19 @@ int main(void)
     return 0;
 }
 
-acionamento xReqAcion()
+acionamento xReqAcion(acionamento comandoUsuario)
 {   
     acionamento status;
-    acionamento comandoUsuario = 0;
 
     switch(comandoUsuario){
         case Abrir_Ligar:
             printf("Abrindo/ligando ...\n");
-            vTaskDelay(30);
+            // vTaskDelay(30);
             status = Abrir_Ligar;
             break;
         case Fechar_Desligar:
             printf("Fechando/desligando ...\n");
-            vTaskDelay(30);
+            // vTaskDelay(30);
             status = Fechar_Desligar;
             break;
         default:
@@ -79,22 +78,22 @@ void vCtrlArCond(void *pvParameters)
     status = xReqAcion(comandoUsuario);
 
     if(status == Abrir_Ligar){
-        printf("Ar condicionado ligado\n");
+        printf("Ar-condicionado ligado\n");
         switch(oprUsuario){
             case config:
                 // Controle da temperatura
                 tmpr = sRand(MIN_TEMP, MAX_TEMP);
-                printf("Ar condicionado configurado em %d°C\n", tmpr);
+                printf("Ar-condicionado configurado em %d C\n", tmpr);
             case modos:
                 switch (modUsuario){ // Alterna modos de operação
                     case refrig:
-                        printf("Ar condicionado configurado no modo refrigeracao\n");
+                        printf("Ar-condicionado configurado no modo refrigeracao\n");
                         break;
                     case autom:
-                        printf("Ar condicionado configurado no modo automatico\n");
+                        printf("Ar-condicionado configurado no modo automatico\n");
                         break;
                     case ventil:
-                        printf("Ar condicionado configurado no modo ventilacao\n");
+                        printf("Ar-condicionado configurado no modo ventilacao\n");
                         break;
                     default:
                         break;
@@ -103,13 +102,15 @@ void vCtrlArCond(void *pvParameters)
                 break;
         }   
     }else{
-        printf("Ar condicionado desligado\n");
+        printf("Ar-condicionado desligado\n");
     }
+    printf("sai do ar-condicionado");
 }
 
 void vCtrlMaqLav(void *pvParameters)
 {   
     // Acionamento liga e desliga
+    printf("entrei");
     acionamento status;
 
     acionamento comandoUsuario = 0;
@@ -148,7 +149,7 @@ void vCtrlMaqLav(void *pvParameters)
                 break;
         }   
     }else{
-        printf("Máquina desligada\n");
+        printf("Maquina desligada\n");
     } 
     
 }
@@ -169,13 +170,13 @@ void vCtrlTempFr(void *pvParameters)
         printf("Freezer ligado\n");
 
         tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
-        printf("Temperatura atual do freezer: -%d°C\n", tmpr);
+        printf("Temperatura atual do freezer: -%d C\n", tmpr);
         
         switch(oprUsuario){
             case config:
                 // Controle da temperatura
                 tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
-                printf("Freezer configurado em -%d°C\n", tmpr);
+                printf("Freezer configurado em -%d C\n", tmpr);
             default:
                 break;
         } 
@@ -229,7 +230,7 @@ void vBkgServer(void *pvParameters)
     printf("1 - Controle portas da garagem\n");
     printf("2 - Controle camera do freezer\n");
     printf("3 - Controle camera do freezer\n");
-    printf("Aperte enter para encerrar a operação\n");
+    printf("Aperte enter para encerrar a operacao\n");
 
    while (scanf("%d", &entrada) != EOF) {
     switch(entrada){
