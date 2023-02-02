@@ -14,12 +14,12 @@ int main(void)
 
     // Criação de tasks
     // Tasks periódicas
-    xTaskCreate(vCtrlArCond, "Controle ar-condicionado", configMINIMAL_STACK_SIZE, NULL, 1, &tsk1); // periodica
-    xTaskCreate(vCtrlMaqLav, "Controle maquina de lavar", configMINIMAL_STACK_SIZE, NULL, 2, &tsk2); // periodica
-    xTaskCreate(vCtrlTempFr, "Controle temperatura do freezer", configMINIMAL_STACK_SIZE, NULL, 3, &tsk3); // periodica
+    xTaskCreate(&vCtrlArCond, "Controle ar-condicionado", configMINIMAL_STACK_SIZE, NULL, 1, &tsk1); // periodica
+    xTaskCreate(&vCtrlMaqLav, "Controle maquina de lavar", configMINIMAL_STACK_SIZE, NULL, 1, &tsk2); // periodica
+    xTaskCreate(&vCtrlTempFr, "Controle temperatura do freezer", configMINIMAL_STACK_SIZE, NULL, 1, &tsk3); // periodica
 
     // Tasks aperiodicas
-    xTaskCreate(vBkgServer, "Tasks aperiodicas", configMINIMAL_STACK_SIZE, NULL, 4, &tsk4); // servidor de aperiodicas
+    // xTaskCreate(vBkgServer, "Tasks aperiodicas", configMINIMAL_STACK_SIZE, NULL, 1, &tsk4); // servidor de aperiodicas
 
     // Escalonador
     vTaskStartScheduler();
@@ -36,15 +36,15 @@ acionamento xReqAcion(acionamento comandoUsuario)
     switch(comandoUsuario){
         case abrirLigar:
             printf("Abrindo/ligando ...\n");
-            // vTaskDelay(30);
+            vTaskDelay(1000/portTICK_PERIOD_MS);
             status = abrirLigar;
-            // printf("Aberto/ligado\n");
+            printf("Aberto/ligado\n");
             break;
         case fecharDesligar:
             printf("Fechando/desligando ...\n");
-            // vTaskDelay(30);
+            vTaskDelay(1000/portTICK_PERIOD_MS);
             status = fecharDesligar;
-            // printf("Fechado/desligado\n");
+            printf("Fechado/desligado\n");
             break;
         default:
             break;
@@ -69,6 +69,7 @@ void vCtrlArCond(void *pvParameters)
     // Acionamento liga e desliga
     acionamento status;
     int tmpr;
+    printf("Vou ligar o ar-condicionado\n");
     status = xReqAcion(comandoUsuario);
 
     if(status == abrirLigar){
@@ -104,7 +105,7 @@ void vCtrlArCond(void *pvParameters)
 void vCtrlMaqLav(void *pvParameters)
 {
     // Acionamento liga e desliga
-    printf("entrei");
+    printf("Entrei na maquina\n");
     acionamento status;
 
     acionamento comandoUsuario = 0;
@@ -112,10 +113,11 @@ void vCtrlMaqLav(void *pvParameters)
     modosLavagem modUsuario = 2;
 
     int tRes;
+    printf("Vou abrir a maquina:\n");
     status = xReqAcion(comandoUsuario);
 
     if(status == abrirLigar){
-        printf("Máquina ligada\n");
+        printf("Maquina ligada\n");
 
         // Visualizar o tempo restante
         tRes = sRand(MIN_TRES, MAX_TRES);
@@ -145,6 +147,8 @@ void vCtrlMaqLav(void *pvParameters)
     }else{
         printf("Maquina desligada\n");
     }
+
+    printf("sai da maquina\n");
 
 }
 
@@ -224,7 +228,7 @@ void vBkgServer(void *pvParameters)
     printf("1 - Controle portas da garagem\n");
     printf("2 - Controle camera do freezer\n");
     printf("3 - Controle camera do freezer\n");
-    printf("Entre com 4 para encerrar a operacao\n");
+    printf("Entre com o valor 4 para encerrar a operacao\n");
 
     while (entrada != 4) {
         scanf("%d", &entrada);
@@ -242,7 +246,7 @@ void vBkgServer(void *pvParameters)
                     vCtrlAsp();
                     break;
             }
-        printf("Entre com outro valor ou encerre a operacao com o valor 4\n");
+        printf("Entre com o valor 4 para encerrar a operacao\n");
     }
     printf("Operacao encerrada\n");
 }
