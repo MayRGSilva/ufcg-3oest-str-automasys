@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 int main(void)
-{   
+{
     xTaskHandle tsk1;
     xTaskHandle tsk2;
     xTaskHandle tsk3;
@@ -14,13 +14,13 @@ int main(void)
 
     // Criação de tasks
     // Tasks periódicas
-    xTaskCreate(vCtrlArCond, "Controle ar-condicionado", configMINIMAL_STACK_SIZE, NULL, 4, &tsk1); // periodica
-    xTaskCreate(vCtrlMaqLav, "Controle maquina de lavar", configMINIMAL_STACK_SIZE, NULL, 3, &tsk2); // periodica
-    xTaskCreate(vCtrlTempFr, "Controle temperatura do freezer", configMINIMAL_STACK_SIZE, NULL, 2, &tsk3); // periodica
-    
+    xTaskCreate(vCtrlArCond, "Controle ar-condicionado", configMINIMAL_STACK_SIZE, NULL, 1, &tsk1); // periodica
+    xTaskCreate(vCtrlMaqLav, "Controle maquina de lavar", configMINIMAL_STACK_SIZE, NULL, 2, &tsk2); // periodica
+    xTaskCreate(vCtrlTempFr, "Controle temperatura do freezer", configMINIMAL_STACK_SIZE, NULL, 3, &tsk3); // periodica
+
     // Tasks aperiodicas
-    xTaskCreate(vBkgServer, "Tasks aperiodicas", configMINIMAL_STACK_SIZE, NULL, 1, &tsk4); // servidor de aperiodicas
-    
+    xTaskCreate(vBkgServer, "Tasks aperiodicas", configMINIMAL_STACK_SIZE, NULL, 4, &tsk4); // servidor de aperiodicas
+
     // Escalonador
     vTaskStartScheduler();
 
@@ -30,7 +30,7 @@ int main(void)
 }
 
 acionamento xReqAcion(acionamento comandoUsuario)
-{   
+{
     acionamento status;
 
     switch(comandoUsuario){
@@ -61,7 +61,7 @@ int sRand(int min, int max){
 }
 
 void vCtrlArCond(void *pvParameters)
-{   
+{
     acionamento comandoUsuario = 0;
     operacao oprUsuario = 0;
     modosArCond modUsuario = 1;
@@ -94,7 +94,7 @@ void vCtrlArCond(void *pvParameters)
                 }
             default:
                 break;
-        }   
+        }
     }else{
         printf("Ar-condicionado desligado\n");
     }
@@ -102,7 +102,7 @@ void vCtrlArCond(void *pvParameters)
 }
 
 void vCtrlMaqLav(void *pvParameters)
-{   
+{
     // Acionamento liga e desliga
     printf("entrei");
     acionamento status;
@@ -124,7 +124,7 @@ void vCtrlMaqLav(void *pvParameters)
         else
             printf("Ciclo de lavagem finalizado\n");
 
-        switch(oprUsuario){         
+        switch(oprUsuario){
             case modos:
                 switch (modUsuario){ // Alterna modos de lavagem
                     case roupasPesadas:
@@ -141,11 +141,11 @@ void vCtrlMaqLav(void *pvParameters)
                 }
             default:
                 break;
-        }   
+        }
     }else{
         printf("Maquina desligada\n");
-    } 
-    
+    }
+
 }
 
 
@@ -165,7 +165,7 @@ void vCtrlTempFr(void *pvParameters)
 
         tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
         printf("Temperatura atual do freezer: -%d C\n", tmpr);
-        
+
         switch(oprUsuario){
             case config:
                 // Controle da temperatura
@@ -173,7 +173,7 @@ void vCtrlTempFr(void *pvParameters)
                 printf("Freezer configurado em -%d C\n", tmpr);
             default:
                 break;
-        } 
+        }
 
     }else{
         printf("Freezer desligado\n");
@@ -193,55 +193,56 @@ void vCtrlAsp()
 
     if(status == abrirLigar){
         printf("Aspirador ligado\n");
-        switch(oprUsuario){
-            case modos:
-                switch (modUsuario){ // Alterna modos de operação
-                    case varrer:
-                        printf("Aspirador configurado no modo varrer\n");
-                        break;
-                    case aspirar:
-                        printf("Aspirador configurado no modo aspirar\n");
-                        break;
-                    case limpar:
-                        printf("Aspirador configurado no modo limpar\n");
-                        break;
-                    default:
-                        break;
-                }
-            default:
-                break;
-        }   
+            switch(oprUsuario){
+                case modos:
+                    switch (modUsuario){ // Alterna modos de operação
+                        case varrer:
+                            printf("Aspirador configurado no modo varrer\n");
+                            break;
+                        case aspirar:
+                            printf("Aspirador configurado no modo aspirar\n");
+                            break;
+                        case limpar:
+                            printf("Aspirador configurado no modo limpar\n");
+                            break;
+                        default:
+                            break;
+                    }
+                default:
+                    break;
+            }
     }else{
-        printf("Aspirador desligado\n");
+    printf("Aspirador desligado\n");
     }
 }
 
 void vBkgServer(void *pvParameters)
-{   
-    int entrada;
+{
+    int entrada = 0;
 
     printf("Digite as tarefas as quais deseja executar:\n");
     printf("1 - Controle portas da garagem\n");
     printf("2 - Controle camera do freezer\n");
     printf("3 - Controle camera do freezer\n");
-    printf("Aperte enter para encerrar a operacao\n");
+    printf("Entre com 4 para encerrar a operacao\n");
 
-   while (scanf("%d", &entrada) != EOF) {
-    switch(entrada){
-        case 1:
-            printf("Controlando portas da garagem ...\n");
-            xReqAcion(0);
-            break;
-        case 2:
-            printf("Controlando camera do freezer ...\n");
-            xReqAcion(1);
-            break;
-        case 3:
-            printf("Controlando aspirador de pó ...\n");
-            vCtrlAsp();
-            break;
-        default:
-            break;
+    while (entrada != 4) {
+        scanf("%d", &entrada);
+            switch(entrada){
+                case 1:
+                    printf("Controlando portas da garagem ...\n");
+                    xReqAcion(0);
+                    break;
+                case 2:
+                    printf("Controlando camera do freezer ...\n");
+                    xReqAcion(1);
+                    break;
+                case 3:
+                    printf("Controlando aspirador de po ...\n");
+                    vCtrlAsp();
+                    break;
+            }
+        printf("Entre com outro valor ou encerre a operacao com o valor 4\n");
     }
-   }
+    printf("Operacao encerrada\n");
 }
