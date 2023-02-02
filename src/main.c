@@ -5,6 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+acionamento xReqAcion();
+int sRand(int min, int max);
+
+void vCtrlArCond(void *pvParameters);
+void vCtrlMaqLav(void *pvParameters);
+void vCtrlTempFr(void *pvParameters);
+void vBkgServer(void *pvParameters);
+
 int main(void)
 {   
     xTaskHandle tsk1;
@@ -14,12 +22,12 @@ int main(void)
 
     // Criação de tasks
     // Tasks periódicas
-    xTaskCreate(vCtrlArCond, (signed char *)"Controle ar-condicionado", configMINIMAL_STACK_SIZE, (void *)NULL, 4, &tsk1); // periodica
-    xTaskCreate(vCtrlMaqLav, (signed char *)"Controle maquina de lavar", configMINIMAL_STACK_SIZE, (void *)NULL, 3, &tsk2); // periodica
-    xTaskCreate(vCtrlTempFr, (signed char *)"Controle temperatura do freezer", configMINIMAL_STACK_SIZE, (void *)NULL, 2, &tsk3); // periodica
+    xTaskCreate(vCtrlArCond, "Controle ar-condicionado", configMINIMAL_STACK_SIZE, NULL, 4, &tsk1); // periodica
+    xTaskCreate(vCtrlMaqLav, "Controle maquina de lavar", configMINIMAL_STACK_SIZE, NULL, 3, &tsk2); // periodica
+    xTaskCreate(vCtrlTempFr, "Controle temperatura do freezer", configMINIMAL_STACK_SIZE, NULL, 2, &tsk3); // periodica
     
     // Tasks aperiodicas
-    xTaskCreate(vBkgServer, (signed char *)"Tasks aperiódicas", configMINIMAL_STACK_SIZE, (void *)NULL, 1, &tsk3); // servidor de aperiodicas
+    xTaskCreate(vBkgServer, "Tasks aperiódicas", configMINIMAL_STACK_SIZE, NULL, 1, &tsk3); // servidor de aperiodicas
     
     // Escalonador
     vTaskStartScheduler();
@@ -37,12 +45,12 @@ acionamento xReqAcion()
     switch(comandoUsuario){
         case Abrir_Ligar:
             printf("Abrindo/ligando ...");
-            xTaskDelay(30);
+            vTaskDelay(30);
             status = Abrir_Ligar;
             break;
         case Fechar_Desligar:
             printf("Fechando/desligando ...");
-            xTaskDelay(30);
+            vTaskDelay(30);
             status = Fechar_Desligar;
             break;
         default:
@@ -59,7 +67,7 @@ int sRand(int min, int max){
     return numRand;
 }
 
-void vCtrlArCond()
+void vCtrlArCond(void *pvParameters)
 {   
     acionamento comandoUsuario = 0;
     operacao oprUsuario = 0;
@@ -99,7 +107,7 @@ void vCtrlArCond()
     }
 }
 
-void vCtrlMaqLav()
+void vCtrlMaqLav(void *pvParameters)
 {   
     // Acionamento liga e desliga
     acionamento status;
@@ -146,7 +154,7 @@ void vCtrlMaqLav()
 }
 
 
-void vCtrlTempFr()
+void vCtrlTempFr(void *pvParameters)
 {
     // Acionamento liga e desliga
     acionamento status;
@@ -213,7 +221,7 @@ void vCtrlAsp()
     }
 }
 
-void vBkgServer()
+void vBkgServer(void *pvParameters)
 {   
     int entrada;
 
