@@ -36,12 +36,12 @@ typedef enum {
     limpar
 }modosAsp;
 
-acionamento xReqAcion();
+acionamento xReqAcion(acionamento comandoUsuario);
 int sRand(int min, int max);
-void vCtrlArCond();
-void vCtrlMaqLav();
-void vCtrlTempFr();
+void vCtrlArCond(void *pvParameters);
+void vCtrlMaqLav(void *pvParameters);
+void vCtrlTempFr(void *pvParameters);
 void vCtrlAsp();
-void vBkgServer();
+void vBkgServer(void *pvParameters);
 
 #endif
