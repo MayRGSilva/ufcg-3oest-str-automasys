@@ -5,14 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-acionamento xReqAcion(acionamento comandoUsuario);
-int sRand(int min, int max);
-
-void vCtrlArCond(void *pvParameters);
-void vCtrlMaqLav(void *pvParameters);
-void vCtrlTempFr(void *pvParameters);
-void vBkgServer(void *pvParameters);
-
 int main(void)
 {   
     xTaskHandle tsk1;
@@ -243,7 +235,7 @@ void vBkgServer(void *pvParameters)
             xReqAcion(1);
         case 3:
             printf("Controlando aspirador de pó ...\n");
-            vCtrlAsp(0, 1, 2);
+            vCtrlAsp();
         default:
             break;
     }
