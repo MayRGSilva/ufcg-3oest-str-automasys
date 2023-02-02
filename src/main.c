@@ -38,11 +38,13 @@ acionamento xReqAcion(acionamento comandoUsuario)
             printf("Abrindo/ligando ...\n");
             // vTaskDelay(30);
             status = abrirLigar;
+            // printf("Aberto/ligado\n");
             break;
         case fecharDesligar:
             printf("Fechando/desligando ...\n");
             // vTaskDelay(30);
             status = fecharDesligar;
+            // printf("Fechado/desligado\n");
             break;
         default:
             break;
@@ -233,6 +235,7 @@ void vBkgServer(void *pvParameters)
         case 2:
             printf("Controlando camera do freezer ...\n");
             xReqAcion(1);
+            break;
         case 3:
             printf("Controlando aspirador de pó ...\n");
             vCtrlAsp();
