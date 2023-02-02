@@ -9,8 +9,8 @@
 #define MAX_TEMP_FR 25
 
 typedef enum {
-    Abrir_Ligar,
-    Fechar_Desligar
+    abrirLigar,
+    fecharDesligar
 }acionamento;
 
 typedef enum {

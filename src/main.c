@@ -34,15 +34,15 @@ acionamento xReqAcion(acionamento comandoUsuario)
     acionamento status;
 
     switch(comandoUsuario){
-        case Abrir_Ligar:
+        case abrirLigar:
             printf("Abrindo/ligando ...\n");
             // vTaskDelay(30);
-            status = Abrir_Ligar;
+            status = abrirLigar;
             break;
-        case Fechar_Desligar:
+        case fecharDesligar:
             printf("Fechando/desligando ...\n");
             // vTaskDelay(30);
-            status = Fechar_Desligar;
+            status = fecharDesligar;
             break;
         default:
             break;
@@ -69,7 +69,7 @@ void vCtrlArCond(void *pvParameters)
     int tmpr;
     status = xReqAcion(comandoUsuario);
 
-    if(status == Abrir_Ligar){
+    if(status == abrirLigar){
         printf("Ar-condicionado ligado\n");
         switch(oprUsuario){
             case config:
@@ -112,7 +112,7 @@ void vCtrlMaqLav(void *pvParameters)
     int tRes;
     status = xReqAcion(comandoUsuario);
 
-    if(status == Abrir_Ligar){
+    if(status == abrirLigar){
         printf("Máquina ligada\n");
 
         // Visualizar o tempo restante
@@ -158,7 +158,7 @@ void vCtrlTempFr(void *pvParameters)
 
     status = xReqAcion(comandoUsuario);
 
-    if(status == Abrir_Ligar){
+    if(status == abrirLigar){
         printf("Freezer ligado\n");
 
         tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
@@ -189,7 +189,7 @@ void vCtrlAsp()
 
     status = xReqAcion(comandoUsuario);
 
-    if(status == Abrir_Ligar){
+    if(status == abrirLigar){
         printf("Aspirador ligado\n");
         switch(oprUsuario){
             case modos:
