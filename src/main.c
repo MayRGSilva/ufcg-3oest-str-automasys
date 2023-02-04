@@ -74,35 +74,38 @@ void vCtrlArCond(void *pvParameters)
     }
     status = xReqAcion(comandoUsuario);
 
-    if(status == abrirLigar){
-        printf("Ar-condicionado ligado\n");
-        switch(oprUsuario){
-            case config:
-                // Controle da temperatura
-                tmpr = sRand(MIN_TEMP, MAX_TEMP);
-                printf("Ar-condicionado configurado em %d C\n", tmpr);
-            case modos:
-                switch (modUsuario){ // Alterna modos de operação
-                    case refrig:
-                        printf("Ar-condicionado configurado no modo refrigeracao\n");
-                        break;
-                    case autom:
-                        printf("Ar-condicionado configurado no modo automatico\n");
-                        break;
-                    case ventil:
-                        printf("Ar-condicionado configurado no modo ventilacao\n");
-                        break;
-                    default:
-                        break;
-                }
-            default:
-                break;
+    while(1){
+        if(status == abrirLigar){
+            printf("Ar-condicionado ligado\n");
+
+            switch(oprUsuario){
+                case config:
+                    // Controle da temperatura
+                    tmpr = sRand(MIN_TEMP, MAX_TEMP);
+                    printf("Ar-condicionado configurado em %d C\n", tmpr);
+                case modos:
+                    switch (modUsuario){ // Alterna modos de operação
+                        case refrig:
+                            printf("Ar-condicionado configurado no modo refrigeracao\n");
+                            break;
+                        case autom:
+                            printf("Ar-condicionado configurado no modo automatico\n");
+                            break;
+                        case ventil:
+                            printf("Ar-condicionado configurado no modo ventilacao\n");
+                            break;
+                        default:
+                            break;
+                    }
+                default:
+                    break;
+            }
+        }else{
+            printf("Ar-condicionado desligado\n");
         }
-    }else{
-        printf("Ar-condicionado desligado\n");
+        printf("\n");
+        vTaskDelay(2000/portTICK_PERIOD_MS); // equivalente a 20 ms
     }
-    printf("\n");
-    vTaskDelay(1000/portTICK_PERIOD_MS);
 }
 
 void vCtrlMaqLav(void *pvParameters)
@@ -122,40 +125,42 @@ void vCtrlMaqLav(void *pvParameters)
         printf("Operacao: Desligar maquina\n");
     }
     status = xReqAcion(comandoUsuario);
-    
-    if(status == abrirLigar){
-        printf("Maquina ligada\n");
 
-        // Visualizar o tempo restante
-        tRes = sRand(MIN_TRES, MAX_TRES);
-        if(tRes > 0)
-            printf("Tempo restante para finalizar o ciclo: %d minutos\n", tRes);
-        else
-            printf("Ciclo de lavagem finalizado\n");
+    while(1){
+        if(status == abrirLigar){
+            printf("Maquina ligada\n");
 
-        switch(oprUsuario){
-            case modos:
-                switch (modUsuario){ // Alterna modos de lavagem
-                    case roupasPesadas:
-                        printf("Maquina de lavar configurada no modo roupas pesadas\n");
-                        break;
-                    case roupasDelicadas:
-                        printf("Maquina de lavar configurada no modo roupas delicadas\n");
-                        break;
-                    case rapida:
-                        printf("Maquina de lavar configurada no modo lavagem rapida\n");
-                        break;
-                    default:
-                        break;
-                }
-            default:
-                break;
+            // Visualizar o tempo restante
+            tRes = sRand(MIN_TRES, MAX_TRES);
+            if(tRes > 0)
+                printf("Tempo restante para finalizar o ciclo: %d minutos\n", tRes);
+            else
+                printf("Ciclo de lavagem finalizado\n");
+
+            switch(oprUsuario){
+                case modos:
+                    switch (modUsuario){ // Alterna modos de lavagem
+                        case roupasPesadas:
+                            printf("Maquina de lavar configurada no modo roupas pesadas\n");
+                            break;
+                        case roupasDelicadas:
+                            printf("Maquina de lavar configurada no modo roupas delicadas\n");
+                            break;
+                        case rapida:
+                            printf("Maquina de lavar configurada no modo lavagem rapida\n");
+                            break;
+                        default:
+                            break;
+                    }
+                default:
+                    break;
+            }
+        }else{
+            printf("Maquina desligada\n");
         }
-    }else{
-        printf("Maquina desligada\n");
+        printf("\n");
+        vTaskDelay(3000/portTICK_PERIOD_MS); // equivalente a 30 ms
     }
-    printf("\n");
-    vTaskDelay(1000/portTICK_PERIOD_MS);
 }
 
 
@@ -176,26 +181,28 @@ void vCtrlTempFr(void *pvParameters)
     }
     status = xReqAcion(comandoUsuario);
 
-    if(status == abrirLigar){
-        printf("Freezer ligado\n");
+    while(1) {
+        if(status == abrirLigar){
+            printf("Freezer ligado\n");
 
-        tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
-        printf("Temperatura atual do freezer: -%d C\n", tmpr);
+            tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
+            printf("Temperatura atual do freezer: -%d C\n", tmpr);
 
-        switch(oprUsuario){
-            case config:
-                // Controle da temperatura
-                tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
-                printf("Freezer configurado em -%d C\n", tmpr);
-            default:
-                break;
+            switch(oprUsuario){
+                case config:
+                    // Controle da temperatura
+                    tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
+                    printf("Freezer configurado em -%d C\n", tmpr);
+                default:
+                    break;
+            }
+
+        }else{
+            printf("Freezer desligado\n");
         }
-
-    }else{
-        printf("Freezer desligado\n");
+        printf("\n");
+        vTaskDelay(1500/portTICK_PERIOD_MS); //equivalente a 15 ms
     }
-    printf("\n");
-    vTaskDelay(1000/portTICK_PERIOD_MS);
 }
 
 void vCtrlAsp()
@@ -232,8 +239,6 @@ void vCtrlAsp()
     }else{
         printf("Aspirador desligado\n");
     }
-    printf("\n");
-    vTaskDelay(1000/portTICK_PERIOD_MS);
 }
 
 void vBkgServer(void *pvParameters)
@@ -269,6 +274,8 @@ void vBkgServer(void *pvParameters)
             case 4:
                 printf("Operacao encerrada\n");
                 printf("\n");
+                break;
         }        
     }
+    vTaskDelay(3000/portTICK_PERIOD_MS);
 }
