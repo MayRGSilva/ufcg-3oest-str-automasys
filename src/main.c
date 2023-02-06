@@ -87,6 +87,7 @@ void vCtrlArCond(void *pvParameters)
             switch(oprUsuario){
                 case config:
                     // Controle da temperatura
+                    // Sensor da temperatura
                     tmpr = sRand(MIN_TEMP, MAX_TEMP);
                     printf("Ar-condicionado configurado em %d C\n", tmpr);
                 case modos:
@@ -137,6 +138,7 @@ void vCtrlMaqLav(void *pvParameters)
             printf("Maquina ligada\n");
 
             // Visualizar o tempo restante
+            // Timer da máquina de lavar
             tRes = sRand(MIN_TRES, MAX_TRES);
             if(tRes > 0)
                 printf("Tempo restante para finalizar o ciclo: %d minutos\n", tRes);
@@ -190,7 +192,8 @@ void vCtrlTempFr(void *pvParameters)
     while(1) {
         if(status == abrirLigar){
             printf("Freezer ligado\n");
-
+            
+            // Sensor de temperatura do freezer
             tmpr = sRand(MIN_TEMP_FR, MAX_TEMP_FR);
             printf("Temperatura atual do freezer: -%d C\n", tmpr);
 
@@ -268,7 +271,7 @@ void vBkgServer(void *pvParameters)
                 break;
             case 2:
                 printf("Controlando camera do freezer ...\n");
-                if(xSemaphoreTake(semaforoBinario, portMAX_DELAY) == pdTRUE){
+                if(xSemaphoreTake(semaforoBinario, (TickType_t)10) == pdTRUE){
                     xReqAcion(1);
                     printf("Camera desligada\n");
                 }
