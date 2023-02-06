@@ -1,9 +1,12 @@
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "task.h"
 #include "main.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+
+xSemaphoreHandle semaforoBinario;
 
 int main(void)
 {
@@ -11,6 +14,9 @@ int main(void)
     xTaskHandle tsk2;
     xTaskHandle tsk3;
     xTaskHandle tsk4;
+
+    // Criação do semáforo
+    semaforoBinario = xSemaphoreCreateBinary();
 
     // Criação de tasks
     // Tasks periódicas
@@ -196,11 +202,11 @@ void vCtrlTempFr(void *pvParameters)
                 default:
                     break;
             }
-
-        }else{
+        } else {
             printf("Freezer desligado\n");
         }
         printf("\n");
+        xSemaphoreGive(semaforoBinario);
         vTaskDelay(1500/portTICK_PERIOD_MS); //equivalente a 15 ms
     }
 }
@@ -262,9 +268,14 @@ void vBkgServer(void *pvParameters)
                 break;
             case 2:
                 printf("Controlando camera do freezer ...\n");
-                xReqAcion(1);
-                printf("Camera desligada\n");
-                printf("\n");                
+                if(xSemaphoreTake(semaforoBinario, portMAX_DELAY) == pdTRUE){
+                    xReqAcion(1);
+                    printf("Camera desligada\n");
+                }
+                else {
+                    printf("Nao foi possivel controlar a camera do freezer\n");
+                }
+                printf("\n");
                 break;
             case 3:
                 printf("Controlando aspirador de po ...\n");
