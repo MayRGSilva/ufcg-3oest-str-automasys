@@ -2,6 +2,7 @@
 #include "semphr.h"
 #include "task.h"
 #include "main.h"
+#include <time.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,6 +58,7 @@ acionamento xReqAcion(acionamento comandoUsuario)
 
 int sRand(int min, int max){
     int numRand;
+    srand(time(NULL));
     numRand = min + rand() % (max - min);
 
     return numRand;
